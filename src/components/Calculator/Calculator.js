@@ -1,29 +1,30 @@
 import React, { Component } from "react";
+import Button from "../Button/Button";
 import "./Calculator.css";
 
 class Calculator extends Component {
   static defaultProps = {
     buttons: [
-      "A/C",
-      "*",
-      "%",
-      "/",
-      "7",
-      "8",
-      "9",
-      "X",
-      "4",
-      "5",
-      "6",
-      "-",
-      "1",
-      "2",
-      "3",
-      "+",
-      "00",
-      "0",
-      ".",
-      "="
+      { id: "clear", value: "A/C" },
+      { id: "*", value: "*" },
+      { id: "percentage", value: "%" },
+      { id: "divide", value: "/" },
+      { id: "seven", value: "7" },
+      { id: "eight", value: "8" },
+      { id: "nine", value: "9" },
+      { id: "multiply", value: "x" },
+      { id: "four", value: "4" },
+      { id: "five", value: "5" },
+      { id: "six", value: "6" },
+      { id: "subtract", value: "-" },
+      { id: "one", value: "1" },
+      { id: "two", value: "2" },
+      { id: "three", value: "3" },
+      { id: "add", value: "+" },
+      { id: "double-zero", value: "00" },
+      { id: "zero", value: "0" },
+      { id: "decimal", value: "." },
+      { id: "equals", value: "=" }
     ]
   };
   render() {
@@ -36,7 +37,12 @@ class Calculator extends Component {
         <hr></hr>
         <div className="buttons">
           {this.props.buttons.map(button => (
-            <button className="btn">{button}</button>
+            // <button className="btn">{button}</button>
+            <Button
+              key={button.id}
+              id={button.id}
+              value={button.value}
+            ></Button>
           ))}
         </div>
       </div>
