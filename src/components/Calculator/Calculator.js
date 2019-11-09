@@ -6,8 +6,8 @@ class Calculator extends Component {
   static defaultProps = {
     buttons: [
       { id: "clear", value: "A/C" },
+      { id: "cancel", value: "CE" },
       { id: "sign", value: "±" },
-      { id: "percentage", value: "%" },
       { id: "divide", value: "/" },
       { id: "seven", value: "7" },
       { id: "eight", value: "8" },
@@ -31,18 +31,14 @@ class Calculator extends Component {
     return (
       <div className="Calculator">
         <div className="display">
-          <span className="previous">2 x 50 x 30</span>
+          <span className="previous">2 x 50 x 3</span>
           <h1 className="total">300</h1>
         </div>
         <hr></hr>
         <div className="buttons">
           {this.props.buttons.map(button => (
             // <button className="btn">{button}</button>
-            <Button
-              key={button.id}
-              id={button.id}
-              value={button.value}
-            ></Button>
+            <Button key={button.id} id={button.id} value={button.value} />
           ))}
         </div>
       </div>

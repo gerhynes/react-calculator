@@ -3,13 +3,11 @@ import "./Button.css";
 
 export default function Button(props) {
   // Check button type
-  const operators = /[x/+\-]/;
-  const equals = /=/;
+  const operators = /[x/+-]/;
   let btnClass = "";
-
   if (operators.test(props.value)) {
     btnClass = "btn operator";
-  } else if (equals.test(props.value)) {
+  } else if (props.value === "=") {
     btnClass = "btn equals";
   } else {
     btnClass = "btn";
