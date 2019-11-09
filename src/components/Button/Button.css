@@ -1,0 +1,9 @@
+.btn.operator {
+  color: red;
+}
+
+.btn.equals {
+  color: #fff;
+  background-color: red;
+  border-radius: 10px;
+}

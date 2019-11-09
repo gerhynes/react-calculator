@@ -6,7 +6,7 @@ class Calculator extends Component {
   static defaultProps = {
     buttons: [
       { id: "clear", value: "A/C" },
-      { id: "*", value: "*" },
+      { id: "sign", value: "±" },
       { id: "percentage", value: "%" },
       { id: "divide", value: "/" },
       { id: "seven", value: "7" },
