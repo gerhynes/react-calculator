@@ -3,8 +3,18 @@ import Button from "../Button/Button";
 import "./Calculator.css";
 
 class Calculator extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      prevVal: "2 x 50 x 3",
+      currentVal: "300",
+      formula: "",
+      currentSign: "pos"
+    };
+    this.handleClear = this.handleClear.bind(this);
+  }
   static defaultProps = {
-    buttons: [
+    allBtns: [
       { id: "clear", value: "A/C" },
       { id: "cancel", value: "CE" },
       { id: "sign", value: "±" },
@@ -27,18 +37,32 @@ class Calculator extends Component {
       { id: "equals", value: "=" }
     ]
   };
+
+  handleClear() {
+    this.setState({
+      prevVal: "0",
+      currentVal: "0",
+      formula: "",
+      currentSign: "pos"
+    });
+  }
   render() {
+    const { prevVal, currentVal } = this.state;
     return (
       <div className="Calculator">
         <div className="display">
-          <span className="previous">2 x 50 x 3</span>
-          <h1 className="total">300</h1>
+          <span className="previous">{prevVal}</span>
+          <h1 className="total">{currentVal}</h1>
         </div>
         <hr></hr>
         <div className="buttons">
-          {this.props.buttons.map(button => (
-            // <button className="btn">{button}</button>
-            <Button key={button.id} id={button.id} value={button.value} />
+          {this.props.allBtns.map(button => (
+            <Button
+              key={button.id}
+              id={button.id}
+              value={button.value}
+              handleClear={this.handleClear}
+            />
           ))}
         </div>
       </div>

@@ -13,5 +13,15 @@ export default function Button(props) {
     btnClass = "btn";
   }
 
-  return <button className={btnClass}>{props.value}</button>;
+  // check button function
+  let btnFunc;
+  if (props.value === "A/C") {
+    btnFunc = props.handleClear;
+  }
+
+  return (
+    <button className={btnClass} onClick={btnFunc}>
+      {props.value}
+    </button>
+  );
 }
