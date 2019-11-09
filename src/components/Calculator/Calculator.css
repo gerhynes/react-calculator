@@ -3,6 +3,7 @@
 } */
 
 .Calculator {
+  position: relative;
   width: 400px;
   height: 600px;
   background-color: #393939;
@@ -15,11 +16,14 @@
 .display {
   padding: 1rem;
   text-align: right;
-  flex: 1;
+  height: 35%;
 }
 
-.previous {
+.formula {
   color: #838383;
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 .total {
@@ -34,7 +38,7 @@ hr {
 }
 
 .buttons {
-  flex: 3;
+  height: 65%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   justify-items: center;

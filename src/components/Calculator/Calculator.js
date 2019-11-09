@@ -6,13 +6,17 @@ class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      prevVal: "2 x 50 x 3",
-      currentVal: "300",
+      prevVal: "",
+      currentVal: "0",
       formula: "",
       currentSign: "pos"
     };
     this.handleClear = this.handleClear.bind(this);
+    this.handleNumber = this.handleNumber.bind(this);
+    this.handleOperator = this.handleOperator.bind(this);
+    this.handleEvaluate = this.handleEvaluate.bind(this);
   }
+
   static defaultProps = {
     allBtns: [
       { id: "clear", value: "A/C" },
@@ -43,16 +47,43 @@ class Calculator extends Component {
       prevVal: "0",
       currentVal: "0",
       formula: "",
+      mathOperator: "",
       currentSign: "pos"
     });
   }
+
+  handleNumber(e) {
+    // Pass number to formula
+    this.setState({
+      formula: this.state.formula + e.target.value,
+      currentVal: e.target.value
+    });
+  }
+
+  handleOperator(e) {
+    // Set operator and pass to formula
+    this.setState({
+      mathOperator: e.target.value,
+      formula: this.state.formula + ` ${e.target.value} `
+    });
+  }
+
+  handleEvaluate() {
+    // Evaluate total of formula
+    this.setState({
+      currentVal: eval(this.state.formula)
+    });
+  }
+
   render() {
-    const { prevVal, currentVal } = this.state;
+    const { formula, currentVal } = this.state;
     return (
       <div className="Calculator">
         <div className="display">
-          <span className="previous">{prevVal}</span>
-          <h1 className="total">{currentVal}</h1>
+          <div className="formula">{formula}</div>
+          <h1 className="total" id="display">
+            {currentVal}
+          </h1>
         </div>
         <hr></hr>
         <div className="buttons">
@@ -62,6 +93,9 @@ class Calculator extends Component {
               id={button.id}
               value={button.value}
               handleClear={this.handleClear}
+              handleNumber={this.handleNumber}
+              handleOperator={this.handleOperator}
+              handleEvaluate={this.handleEvaluate}
             />
           ))}
         </div>

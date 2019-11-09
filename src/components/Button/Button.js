@@ -2,9 +2,14 @@ import React from "react";
 import "./Button.css";
 
 export default function Button(props) {
-  // Check button type
-  const operators = /[x/+-]/;
+  const operators = /^[x/+-]/;
+  const numbers = /\d/;
+
+  // ============
+  // Apply styles
+  // ============
   let btnClass = "";
+  // Check button type
   if (operators.test(props.value)) {
     btnClass = "btn operator";
   } else if (props.value === "=") {
@@ -13,14 +18,29 @@ export default function Button(props) {
     btnClass = "btn";
   }
 
-  // check button function
+  // ===================
+  // Add methods
+  // ===================
   let btnFunc;
+  // Check if clear was pressed
   if (props.value === "A/C") {
     btnFunc = props.handleClear;
   }
+  // Check if a number was entered
+  if (numbers.test(props.value)) {
+    btnFunc = props.handleNumber;
+  }
+  // Check of operator was pressed
+  if (operators.test(props.value)) {
+    btnFunc = props.handleOperator;
+  }
+  // Check if eval pressed
+  if (props.value === "=") {
+    btnFunc = props.handleEvaluate;
+  }
 
   return (
-    <button className={btnClass} onClick={btnFunc}>
+    <button className={btnClass} onClick={btnFunc} value={props.value}>
       {props.value}
     </button>
   );
