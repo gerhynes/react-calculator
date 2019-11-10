@@ -9,7 +9,8 @@ class Calculator extends Component {
       prevVal: "",
       currentVal: "0",
       formula: "",
-      currentSign: "pos"
+      currentSign: "pos",
+      lastClicked: ""
     };
     this.handleClear = this.handleClear.bind(this);
     this.handleNumber = this.handleNumber.bind(this);
@@ -70,8 +71,12 @@ class Calculator extends Component {
 
   handleEvaluate() {
     // Evaluate total of formula
+    let expression = this.state.formula;
+    expression = expression.replace(/x/g, "*").replace(/‑/g, "-");
+    let result = Math.round(1000000 * eval(expression)) / 1000000;
     this.setState({
-      currentVal: eval(this.state.formula)
+      currentVal: result.toString(),
+      formula: expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result
     });
   }
 
