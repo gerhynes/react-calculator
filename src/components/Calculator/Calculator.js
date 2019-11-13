@@ -57,17 +57,22 @@ class Calculator extends Component {
   }
 
   handleNumber(e) {
-    // Pass number to formula
     this.setState({
+      // If currentVal is 0 or an operator, replace with input
+      // Otherwise concat on input
       currentVal:
         this.state.currentVal === "0" ||
         this.isOperator.test(this.state.currentVal)
           ? e.target.value
           : this.state.currentVal + e.target.value,
+      // If currentVal is 0 and input is 0, keep formula the same
+      // Otherwise:
+      // if formula ends in an operator followed by 0, remove the final character
+      // otherwise, concat on the input
       formula:
         this.state.currentVal === "0" && e.target.value === "0"
           ? this.state.formula
-          : /[^.0-9]0$/.test(this.state.formula)
+          : /([^.0-9]0)$/.test(this.state.formula)
           ? this.state.formula.slice(0, -1) + e.target.value
           : this.state.formula + e.target.value
     });
