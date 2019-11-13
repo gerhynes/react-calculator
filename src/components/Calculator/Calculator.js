@@ -43,6 +43,9 @@ class Calculator extends Component {
     ]
   };
 
+  isOperator = /[x/+‑]/;
+  endsWithOperator = /[x/+‑]$/;
+
   handleClear() {
     this.setState({
       prevVal: "0",
@@ -56,8 +59,17 @@ class Calculator extends Component {
   handleNumber(e) {
     // Pass number to formula
     this.setState({
-      formula: this.state.formula + e.target.value,
-      currentVal: e.target.value
+      currentVal:
+        this.state.currentVal === "0" ||
+        this.isOperator.test(this.state.currentVal)
+          ? e.target.value
+          : this.state.currentVal + e.target.value,
+      formula:
+        this.state.currentVal === "0" && e.target.value === "0"
+          ? this.state.formula
+          : /[^.0-9]0$/.test(this.state.formula)
+          ? this.state.formula.slice(0, -1) + e.target.value
+          : this.state.formula + e.target.value
     });
   }
 
@@ -76,7 +88,8 @@ class Calculator extends Component {
     let result = Math.round(1000000 * eval(expression)) / 1000000;
     this.setState({
       currentVal: result.toString(),
-      formula: expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result
+      formula: expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result,
+      prevVal: result
     });
   }
 
