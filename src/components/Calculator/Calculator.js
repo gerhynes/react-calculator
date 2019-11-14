@@ -48,11 +48,11 @@ class Calculator extends Component {
 
   handleClear() {
     this.setState({
-      prevVal: "0",
       currentVal: "0",
+      prevVal: "0",
       formula: "",
-      mathOperator: "",
-      currentSign: "pos"
+      currentSign: "pos",
+      lastClicked: ""
     });
   }
 
@@ -79,10 +79,18 @@ class Calculator extends Component {
   }
 
   handleOperator(e) {
-    // Set operator and pass to formula
+    // Save formula to prevVal to let you change operator after clicking an operator
     this.setState({
-      mathOperator: e.target.value,
-      formula: this.state.formula + ` ${e.target.value} `
+      prevVal: !this.isOperator.test(this.state.currentVal)
+        ? this.state.formula
+        : this.state.prevVal,
+      formula: !this.isOperator.test(this.state.currentVal)
+        ? (this.state.formula += e.target.value)
+        : (this.state.prevVal += e.target.value)
+    });
+    this.setState({
+      currentVal: e.target.value,
+      lastClicked: "operator"
     });
   }
 
@@ -100,6 +108,7 @@ class Calculator extends Component {
 
   render() {
     const { formula, currentVal } = this.state;
+    const { allBtns } = this.props;
     return (
       <div className="Calculator">
         <div className="display">
@@ -110,7 +119,7 @@ class Calculator extends Component {
         </div>
         <hr></hr>
         <div className="buttons">
-          {this.props.allBtns.map(button => (
+          {allBtns.map(button => (
             <Button
               key={button.id}
               id={button.id}
