@@ -34,6 +34,10 @@ export default function Button(props) {
   if (operators.test(props.value)) {
     btnFunc = props.handleOperator;
   }
+  // Check if decimal was pressed
+  if (props.value === ".") {
+    btnFunc = props.handleDecimal;
+  }
   // Check if eval pressed
   if (props.value === "=") {
     btnFunc = props.handleEvaluate;

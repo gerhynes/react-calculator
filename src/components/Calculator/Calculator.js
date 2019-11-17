@@ -12,9 +12,10 @@ class Calculator extends Component {
       currentSign: "pos",
       lastClicked: ""
     };
-    this.handleClear = this.handleClear.bind(this);
     this.handleNumber = this.handleNumber.bind(this);
+    this.handleDecimal = this.handleDecimal.bind(this);
     this.handleOperator = this.handleOperator.bind(this);
+    this.handleClear = this.handleClear.bind(this);
     this.handleEvaluate = this.handleEvaluate.bind(this);
   }
 
@@ -78,6 +79,13 @@ class Calculator extends Component {
     });
   }
 
+  handleDecimal(e) {
+    this.setState({
+      currentVal: this.state.formula + ".",
+      formula: this.state.formula + "."
+    });
+  }
+
   handleOperator(e) {
     // Save formula to prevVal to let you change operator after clicking an operator
     this.setState({
@@ -124,9 +132,10 @@ class Calculator extends Component {
               key={button.id}
               id={button.id}
               value={button.value}
-              handleClear={this.handleClear}
               handleNumber={this.handleNumber}
+              handleDecimal={this.handleDecimal}
               handleOperator={this.handleOperator}
+              handleClear={this.handleClear}
               handleEvaluate={this.handleEvaluate}
             />
           ))}
