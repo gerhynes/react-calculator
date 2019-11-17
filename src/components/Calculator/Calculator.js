@@ -17,9 +17,11 @@ class Calculator extends Component {
     this.handleOperator = this.handleOperator.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.handleEvaluate = this.handleEvaluate.bind(this);
+    this.digitLimitAlert = this.digitLimitAlert.bind(this);
   }
 
   static defaultProps = {
+    digitLimit: 10,
     allBtns: [
       { id: "clear", value: "A/C" },
       { id: "cancel", value: "CE" },
@@ -58,25 +60,35 @@ class Calculator extends Component {
   }
 
   handleNumber(e) {
-    this.setState({
-      // If currentVal is 0 or an operator, replace with input
-      // Otherwise concat on input
-      currentVal:
-        this.state.currentVal === "0" ||
-        this.isOperator.test(this.state.currentVal)
-          ? e.target.value
-          : this.state.currentVal + e.target.value,
-      // If currentVal is 0 and input is 0, keep formula the same
-      // Otherwise:
-      // if formula ends in an operator followed by 0, remove the final character
-      // otherwise, concat on the input
-      formula:
-        this.state.currentVal === "0" && e.target.value === "0"
-          ? this.state.formula
-          : /([^.0-9]0)$/.test(this.state.formula)
-          ? this.state.formula.slice(0, -1) + e.target.value
-          : this.state.formula + e.target.value
-    });
+    if (this.state.currentVal.indexOf("Limit") === -1) {
+      console.log("Not at limit");
+      this.setState({
+        lastClicked: "num"
+      });
+      if (this.state.currentVal.length > this.props.digitLimit) {
+        this.digitLimitAlert();
+      } else {
+        this.setState({
+          // If currentVal is 0 or an operator, replace with input
+          // Otherwise concat on input
+          currentVal:
+            this.state.currentVal === "0" ||
+            this.isOperator.test(this.state.currentVal)
+              ? e.target.value
+              : this.state.currentVal + e.target.value,
+          // If currentVal is 0 and input is 0, keep formula the same
+          // Otherwise:
+          // if formula ends in an operator followed by 0, remove the final character
+          // otherwise, concat on the input
+          formula:
+            this.state.currentVal === "0" && e.target.value === "0"
+              ? this.state.formula
+              : /([^.0-9]0)$/.test(this.state.formula)
+              ? this.state.formula.slice(0, -1) + e.target.value
+              : this.state.formula + e.target.value
+        });
+      }
+    }
   }
 
   handleDecimal(e) {
@@ -112,6 +124,21 @@ class Calculator extends Component {
       formula: expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result,
       prevVal: result
     });
+  }
+
+  digitLimitAlert() {
+    this.setState({
+      currentVal: "Digit Limit Met",
+      prevVal: this.state.currentVal
+    });
+
+    setTimeout(
+      () =>
+        this.setState({
+          currentVal: this.state.prevVal
+        }),
+      1000
+    );
   }
 
   render() {
