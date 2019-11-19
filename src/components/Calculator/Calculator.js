@@ -61,7 +61,6 @@ class Calculator extends Component {
 
   handleNumber(e) {
     if (this.state.currentVal.indexOf("Limit") === -1) {
-      console.log("Not at limit");
       this.setState({
         lastClicked: "num"
       });
@@ -115,15 +114,29 @@ class Calculator extends Component {
   }
 
   handleEvaluate() {
-    // Evaluate total of formula
-    let expression = this.state.formula;
-    expression = expression.replace(/x/g, "*").replace(/‑/g, "-");
-    let result = Math.round(1000000 * eval(expression)) / 1000000;
-    this.setState({
-      currentVal: result.toString(),
-      formula: expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result,
-      prevVal: result
-    });
+    if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
+      let expression = this.state.formula;
+      if (this.endsWithOperator.test(expression))
+        expression = expression.slice(0, -1);
+      expression = expression.replace(/x/g, "*").replace(/‑/g, "-");
+      let result = Math.round(1000000 * eval(expression)) / 1000000;
+      this.setState({
+        currentVal: result.toString(),
+        formula:
+          expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result,
+        prevVal: result,
+        lastClicked: "evaluate"
+      });
+    }
+  }
+
+  lockOperators(formula, currentVal) {
+    // Lock operators if formula ends in * or - or if digitLimitAlert is showing
+    return (
+      formula.lastIndexOf("*") === formula.length - 1 ||
+      formula.lastIndexOf("-") === formula.length - 1 ||
+      currentVal.indexOf("Met") !== -1
+    );
   }
 
   digitLimitAlert() {
