@@ -98,24 +98,37 @@ class Calculator extends Component {
   }
 
   handleOperator(e) {
-    // Save formula to prevVal to let you change operator after clicking an operator
-    this.setState({
-      prevVal: !this.isOperator.test(this.state.currentVal)
-        ? this.state.formula
-        : this.state.prevVal,
-      formula: !this.isOperator.test(this.state.currentVal)
-        ? (this.state.formula += e.target.value)
-        : (this.state.prevVal += e.target.value)
-    });
-    this.setState({
-      currentVal: e.target.value,
-      lastClicked: "operator"
-    });
+    // Check if operators are locked
+    if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
+      // If the formula contains =, add on the input value
+      if (this.state.formula.indexOf("=") !== -1) {
+        this.setState({
+          formula: this.state.prevVal + e.target.value
+        });
+      } else {
+        // Save formula to prevVal to let you change operator after clicking an operator
+        this.setState({
+          prevVal: !this.isOperator.test(this.state.currentVal)
+            ? this.state.formula
+            : this.state.prevVal,
+          formula: !this.isOperator.test(this.state.currentVal)
+            ? (this.state.formula += e.target.value)
+            : (this.state.prevVal += e.target.value)
+        });
+      }
+      // operator defaults
+      this.setState({
+        currentVal: e.target.value,
+        lastClicked: "operator"
+      });
+    }
   }
 
   handleEvaluate() {
+    // Check if operators are locked
     if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
       let expression = this.state.formula;
+      // If the formula ends with an operator, remove it
       if (this.endsWithOperator.test(expression))
         expression = expression.slice(0, -1);
       expression = expression.replace(/x/g, "*").replace(/‑/g, "-");
