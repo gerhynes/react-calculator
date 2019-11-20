@@ -38,6 +38,10 @@ export default function Button(props) {
   if (props.value === ".") {
     btnFunc = props.handleDecimal;
   }
+  // Check if toggleSign was pressed
+  if (props.value === "±") {
+    btnFunc = props.handleToggleSign;
+  }
   // Check if eval pressed
   if (props.value === "=") {
     btnFunc = props.handleEvaluate;

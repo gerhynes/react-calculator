@@ -16,6 +16,9 @@ class Calculator extends Component {
     this.handleDecimal = this.handleDecimal.bind(this);
     this.handleOperator = this.handleOperator.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.handleToggleSign = this.handleToggleSign.bind(this);
+    this.toggleToNegative = this.toggleToNegative.bind(this);
+    this.toggleToPositive = this.toggleToPositive.bind(this);
     this.handleEvaluate = this.handleEvaluate.bind(this);
     this.digitLimitAlert = this.digitLimitAlert.bind(this);
   }
@@ -25,7 +28,7 @@ class Calculator extends Component {
     allBtns: [
       { id: "clear", value: "A/C" },
       { id: "cancel", value: "CE" },
-      { id: "sign", value: "±" },
+      { id: "toggleSign", value: "±" },
       { id: "divide", value: "/" },
       { id: "seven", value: "7" },
       { id: "eight", value: "8" },
@@ -48,6 +51,38 @@ class Calculator extends Component {
 
   isOperator = /[x/+‑]/;
   endsWithOperator = /[x/+‑]$/;
+
+  toggleToNegative(formula, currentVal) {
+    this.setState({
+      // Put a - before any number, decimal of whole
+      currentVal: "-" + this.state.formula.match(/(\d*\.?\d*)$/)[0],
+      // Replace the last number in the formula
+      formula: formula.replace(
+        /(\d*\.?\d*)$/,
+        "(-" + this.state.formula.match(/(\d*\.?\d*)$/)[0]
+      ),
+      currentSign: "neg"
+    });
+  }
+
+  toggleToPositive(formula, lastOpen, currentVal) {
+    this.setState({
+      currentSign: "pos"
+    });
+    if (currentVal === "-") {
+      this.setState({
+        currenVal: "0",
+        formula:
+          formula.substring(0, lastOpen) + formula.substring(lastOpen + 2)
+      });
+    } else {
+      this.setState({
+        currentVal: currentVal.slice(currentVal.indexOf("-") + 1),
+        formula:
+          formula.substring(0, lastOpen) + formula.substring(lastOpen + 2)
+      });
+    }
+  }
 
   handleClear() {
     this.setState({
@@ -124,6 +159,33 @@ class Calculator extends Component {
     }
   }
 
+  handleToggleSign() {
+    this.setState({
+      lastClicked: "toggleSign"
+    });
+    if (this.state.lastClicked === "evaluate") {
+      this.setState({
+        currentVal:
+          this.state.currentVal.indexOf("-") > -1
+            ? this.state.currentVal.slice(1)
+            : "-" + this.state.currentVal,
+        formula:
+          this.state.currentVal.indexOf("-") > -1
+            ? this.state.currentVal.slice(1)
+            : "(" + this.state.currentVal,
+        currentSign: this.state.currentVal.indexOf("-") > -1 ? "pos" : "neg"
+      });
+    } else if (this.state.currentSign === "neg") {
+      this.toggleToPositive(
+        this.state.formula,
+        this.state.formula.lastIndexOf("(-"),
+        this.state.currentVal
+      );
+    } else {
+      this.toggleToNegative(this.state.formula, this.state.currentVal);
+    }
+  }
+
   handleEvaluate() {
     // Check if operators are locked
     if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
@@ -132,6 +194,11 @@ class Calculator extends Component {
       if (this.endsWithOperator.test(expression))
         expression = expression.slice(0, -1);
       expression = expression.replace(/x/g, "*").replace(/‑/g, "-");
+      // Make sure there is a closing bracket if needed
+      expression =
+        expression.lastIndexOf("(") > expression.lastIndexOf(")")
+          ? expression + ")"
+          : expression;
       let result = Math.round(1000000 * eval(expression)) / 1000000;
       this.setState({
         currentVal: result.toString(),
@@ -189,6 +256,7 @@ class Calculator extends Component {
               handleDecimal={this.handleDecimal}
               handleOperator={this.handleOperator}
               handleClear={this.handleClear}
+              handleToggleSign={this.handleToggleSign}
               handleEvaluate={this.handleEvaluate}
             />
           ))}
