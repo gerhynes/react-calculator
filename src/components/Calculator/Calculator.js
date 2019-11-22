@@ -19,6 +19,7 @@ class Calculator extends Component {
     this.handleToggleSign = this.handleToggleSign.bind(this);
     this.toggleToNegative = this.toggleToNegative.bind(this);
     this.toggleToPositive = this.toggleToPositive.bind(this);
+    this.handleCE = this.handleCE.bind(this);
     this.handleEvaluate = this.handleEvaluate.bind(this);
     this.digitLimitAlert = this.digitLimitAlert.bind(this);
   }
@@ -186,6 +187,32 @@ class Calculator extends Component {
     }
   }
 
+  handleCE() {
+    /* Check if formula ends with:
+        1. x+-/
+        2. digit(s).digit(s)
+        3. (-digit(s).digit(s)
+        4. (-
+        5. )x+-/
+    */
+    let endswith = /[x+‑\/]$|\d+\.?\d*$|(\(-\d+\.?\d*)$|(\(-)$|\)[x+‑\/]$/;
+    this.setState({
+      formula: this.state.formula.replace(endswith, ""),
+      currentVal: "0",
+      lastClicked: "CE"
+    });
+    setTimeout(() => {
+      this.setState({
+        currentSign:
+          this.state.formula === "" ||
+          this.endsWithOperator.test(this.state.formula) ||
+          this.state.formula.match(/(\(?-?\d+\.?\d*)$/)[0].indexOf("-") === -1
+            ? "pos"
+            : "neg"
+      });
+    }, 100);
+  }
+
   handleEvaluate() {
     // Check if operators are locked
     if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
@@ -257,6 +284,7 @@ class Calculator extends Component {
               handleOperator={this.handleOperator}
               handleClear={this.handleClear}
               handleToggleSign={this.handleToggleSign}
+              handleCE={this.handleCE}
               handleEvaluate={this.handleEvaluate}
             />
           ))}

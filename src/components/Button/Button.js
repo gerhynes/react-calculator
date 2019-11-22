@@ -9,6 +9,7 @@ export default function Button(props) {
   // Apply styles
   // ============
   let btnClass = "";
+
   // Check button type
   if (operators.test(props.value)) {
     btnClass = "btn operator";
@@ -41,6 +42,9 @@ export default function Button(props) {
   // Check if toggleSign was pressed
   if (props.value === "±") {
     btnFunc = props.handleToggleSign;
+  }
+  if (props.value === "CE") {
+    btnFunc = props.handleCE;
   }
   // Check if eval pressed
   if (props.value === "=") {
