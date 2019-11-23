@@ -127,10 +127,35 @@ class Calculator extends Component {
   }
 
   handleDecimal(e) {
-    this.setState({
-      currentVal: this.state.formula + ".",
-      formula: this.state.formula + "."
-    });
+    if (
+      this.state.currentVal.indexOf(".") === -1 &&
+      this.state.currentVal.indexOf("Limit") === -1
+    ) {
+      this.setState({
+        lastClicked: this.state.lastClicked === "CE" ? "CE" : "decimal"
+      });
+      if (this.state.currentVal.length > this.props.digitLimit) {
+        this.digitLimitAlert();
+      } else if (
+        this.state.lastClicked === "evaluated" ||
+        this.endsWithOperator.test(this.state.formula) ||
+        (this.state.currentVal === "0" && this.state.formula === "") ||
+        /-$/.test(this.state.formula)
+      ) {
+        this.setState({
+          currenVal: "0.",
+          formula:
+            this.state.lastClicked === "evaluated"
+              ? "0."
+              : this.state.formula + "0."
+        });
+      } else {
+        this.setState({
+          currentVal: this.state.formula.match(/(-?\d+\.?\d*)$/)[0] + ".",
+          formula: this.state.formula + "."
+        });
+      }
+    }
   }
 
   handleOperator(e) {
