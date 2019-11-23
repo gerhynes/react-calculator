@@ -55,7 +55,7 @@ class Calculator extends Component {
 
   toggleToNegative(formula, currentVal) {
     this.setState({
-      // Put a - before any number, decimal of whole
+      // Put a - before any number, decimal or whole
       currentVal: "-" + this.state.formula.match(/(\d*\.?\d*)$/)[0],
       // Replace the last number in the formula
       formula: formula.replace(
@@ -70,7 +70,13 @@ class Calculator extends Component {
     this.setState({
       currentSign: "pos"
     });
-    if (currentVal === "-") {
+    if (this.state.lastClicked === "CE") {
+      this.setState({
+        currenVal: this.state.formula.match(/(\d+\.?\d*)$/)[0],
+        formula:
+          formula.substring(0, lastOpen) + formula.substring(lastOpen + 2)
+      });
+    } else if (currentVal === "-") {
       this.setState({
         currenVal: "0",
         formula:
