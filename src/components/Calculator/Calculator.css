@@ -1,6 +1,9 @@
-/* * {
-  outline: 1px solid red;
-} */
+.Calculator-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 21.6px);
+}
 
 .Calculator {
   position: relative;

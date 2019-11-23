@@ -296,29 +296,31 @@ class Calculator extends Component {
     const { formula, currentVal } = this.state;
     const { allBtns } = this.props;
     return (
-      <div className="Calculator">
-        <div className="display">
-          <div className="formula">{formula}</div>
-          <h1 className="total" id="display">
-            {currentVal}
-          </h1>
-        </div>
-        <hr></hr>
-        <div className="buttons">
-          {allBtns.map(button => (
-            <Button
-              key={button.id}
-              id={button.id}
-              value={button.value}
-              handleNumber={this.handleNumber}
-              handleDecimal={this.handleDecimal}
-              handleOperator={this.handleOperator}
-              handleClear={this.handleClear}
-              handleToggleSign={this.handleToggleSign}
-              handleCE={this.handleCE}
-              handleEvaluate={this.handleEvaluate}
-            />
-          ))}
+      <div className="Calculator-wrapper">
+        <div className="Calculator">
+          <div className="display">
+            <div className="formula">{formula}</div>
+            <h1 className="total" id="display">
+              {currentVal}
+            </h1>
+          </div>
+          <hr></hr>
+          <div className="buttons">
+            {allBtns.map(button => (
+              <Button
+                key={button.id}
+                id={button.id}
+                value={button.value}
+                handleNumber={this.handleNumber}
+                handleDecimal={this.handleDecimal}
+                handleOperator={this.handleOperator}
+                handleClear={this.handleClear}
+                handleToggleSign={this.handleToggleSign}
+                handleCE={this.handleCE}
+                handleEvaluate={this.handleEvaluate}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
