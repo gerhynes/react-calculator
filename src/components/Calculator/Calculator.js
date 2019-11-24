@@ -168,8 +168,18 @@ class Calculator extends Component {
   handleOperator(e) {
     // Check if operators are locked
     if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
+      // Check for an open bracket and close it
+      if (
+        this.state.formula.lastIndexOf("(") >
+        this.state.formula.lastIndexOf(")")
+      ) {
+        this.setState({
+          formula: this.state.formula + ")" + e.target.value,
+          prevVal: this.state.formula + ")"
+        });
+      }
       // If the formula contains =, add on the input value
-      if (this.state.formula.indexOf("=") !== -1) {
+      else if (this.state.formula.indexOf("=") !== -1) {
         this.setState({
           formula: this.state.prevVal + e.target.value
         });
@@ -186,6 +196,7 @@ class Calculator extends Component {
       }
       // operator defaults
       this.setState({
+        currentSign: "pos",
         currentVal: e.target.value,
         lastClicked: "operator"
       });
