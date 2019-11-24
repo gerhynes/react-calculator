@@ -72,6 +72,7 @@ class Calculator extends Component {
     });
     if (this.state.lastClicked === "CE") {
       this.setState({
+        // Replace currentVal with the last number from the formula
         currenVal: this.state.formula.match(/(\d+\.?\d*)$/)[0],
         formula:
           formula.substring(0, lastOpen) + formula.substring(lastOpen + 2)
@@ -263,6 +264,7 @@ class Calculator extends Component {
         formula:
           expression.replace(/\*/g, "x").replace(/-/g, "‑") + "=" + result,
         prevVal: result,
+        currentSign: result[0] === "-" ? "neg" : "pos",
         lastClicked: "evaluate"
       });
     }
@@ -282,7 +284,6 @@ class Calculator extends Component {
       currentVal: "Digit Limit Met",
       prevVal: this.state.currentVal
     });
-
     setTimeout(
       () =>
         this.setState({
