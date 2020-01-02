@@ -65,3 +65,9 @@ hr {
 .btn:active {
   outline: 1px solid #838383;
 }
+
+@media (max-width: 400px) {
+  .Calculator {
+    width: 90%;
+  }
+}

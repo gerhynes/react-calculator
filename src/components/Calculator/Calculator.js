@@ -144,7 +144,7 @@ class Calculator extends Component {
       if (this.state.currentVal.length > this.props.digitLimit) {
         this.digitLimitAlert();
       } else if (
-        this.state.lastClicked === "evaluated" ||
+        this.state.lastClicked === "evaluate" ||
         this.endsWithOperator.test(this.state.formula) ||
         (this.state.currentVal === "0" && this.state.formula === "") ||
         /-$/.test(this.state.formula)
@@ -152,7 +152,7 @@ class Calculator extends Component {
         this.setState({
           currenVal: "0.",
           formula:
-            this.state.lastClicked === "evaluated"
+            this.state.lastClicked === "evaluate"
               ? "0."
               : this.state.formula + "0."
         });
@@ -238,9 +238,9 @@ class Calculator extends Component {
         4. (-
         5. )x+-/
     */
-    let endswith = /[x+‑\/]$|\d+\.?\d*$|(\(-\d+\.?\d*)$|(\(-)$|\)[x+‑\/]$/;
+    let endsWith = /[x+‑\/]$|\d+\.?\d*$|(\(-\d+\.?\d*)$|(\(-)$|\)[x+‑\/]$/;
     this.setState({
-      formula: this.state.formula.replace(endswith, ""),
+      formula: this.state.formula.replace(endsWith, ""),
       currentVal: "0",
       lastClicked: "CE"
     });

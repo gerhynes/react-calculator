@@ -52,7 +52,12 @@ export default function Button(props) {
   }
 
   return (
-    <button className={btnClass} onClick={btnFunc} value={props.value}>
+    <button
+      className={btnClass}
+      onClick={btnFunc}
+      value={props.value}
+      id={props.id}
+    >
       {props.value}
     </button>
   );
