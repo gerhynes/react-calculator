@@ -239,11 +239,21 @@ class Calculator extends Component {
         5. )x+-/
     */
     let endsWith = /[x+‑\/]$|\d+\.?\d*$|(\(-\d+\.?\d*)$|(\(-)$|\)[x+‑\/]$/;
-    this.setState({
-      formula: this.state.formula.replace(endsWith, ""),
-      currentVal: "0",
-      lastClicked: "CE"
-    });
+    if (this.state.formula.indexOf("=") !== -1) {
+      this.setState({
+        prevVal: "",
+        currentVal: "0",
+        formula: "",
+        currentSign: "pos",
+        lastClicked: ""
+      });
+    } else {
+      this.setState({
+        formula: this.state.formula.replace(endsWith, ""),
+        currentVal: "0",
+        lastClicked: "CE"
+      });
+    }
     setTimeout(() => {
       this.setState({
         currentSign:
@@ -292,7 +302,7 @@ class Calculator extends Component {
 
   digitLimitAlert() {
     this.setState({
-      currentVal: "Digit Limit Met",
+      currentVal: "Digit Limit Reached",
       prevVal: this.state.currentVal
     });
     setTimeout(
