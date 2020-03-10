@@ -109,6 +109,18 @@ class Calculator extends Component {
       });
       if (this.state.currentVal.length > this.props.digitLimit) {
         this.digitLimitAlert();
+      } else if (this.state.lastClicked === "CE" && this.state.formula !== "") {
+        this.setState({
+          currenVal: !this.endsWithOperator.test(this.state.formula)
+            ? this.state.formula.match(/(-?\d+\.?\d*)$/)[0] + e.target.value
+            : e.target.value,
+          formula: (this.state.formula += e.target.value)
+        });
+      } else if (this.state.formula.indexOf("=") !== -1) {
+        this.setState({
+          currenVal: e.target.value,
+          formula: e.target.value !== "0" ? e.taregt.value : ""
+        });
       } else {
         this.setState({
           // If currentVal is 0 or an operator, replace with input
