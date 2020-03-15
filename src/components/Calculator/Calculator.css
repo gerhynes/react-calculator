@@ -19,21 +19,14 @@
 }
 
 .display {
-  padding: 1rem;
+  padding: 2rem;
   text-align: right;
   height: 35%;
-}
-
-.formula {
-  color: #838383;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-}
-
-.total {
   font-size: 4rem;
   font-weight: 400;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 hr {
@@ -48,12 +41,37 @@ hr {
   grid-template-columns: repeat(4, 1fr);
   justify-items: center;
   gap: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.5rem 0.5rem 1rem 0.5rem;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  grid-template-areas:
+    "controls controls controls operators"
+    "numbers numbers numbers operators"
+    "numbers numbers numbers operators"
+    "numbers numbers numbers operators";
 }
 
-.btn {
+.controls {
+  grid-area: controls;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+}
+
+.numbers {
+  grid-area: numbers;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+}
+
+.operators {
+  grid-area: operators;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.button {
   background-color: #393939;
   color: #838383;
   border: none;
@@ -62,8 +80,19 @@ hr {
   width: 100%;
 }
 
-.btn:active {
+.button:active {
   outline: 1px solid #838383;
+}
+
+.button.operator {
+  color: red;
+}
+
+.button.equals {
+  color: #fff;
+  background-color: red;
+  width: 62px;
+  border-radius: 50%;
 }
 
 @media (max-width: 400px) {
