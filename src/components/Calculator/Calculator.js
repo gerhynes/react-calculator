@@ -34,6 +34,47 @@ class Calculator extends Component {
     }
   };
 
+  handleClick = e => {
+    const { calculation, lastClicked } = this.state;
+
+    switch (e.target.innerText) {
+      case "AC": {
+        this.setState({
+          calculation: "0"
+        });
+        break;
+      }
+
+      case "=": {
+        this.setState({
+          calculation: evaluated
+        });
+        break;
+      }
+
+      case ".": {
+        const splitCalc = calculation.split(/[\+\-\*\/]/);
+        const last = splitCalc.slice(-1)[0];
+
+        if (!last.includes(".")) {
+          this.setState({
+            calculation: calculation + "."
+          });
+        }
+        break;
+      }
+
+      default: {
+        let e = undefined;
+
+        if (operators.includes(e.target.innerText)) {
+          if (operators.includes(lastClicked) && innerText !== "-") {
+          }
+        }
+      }
+    }
+  };
+
   digitLimitAlert() {
     let previousVal = this.state.calculation;
     this.setState({
