@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Button from "../Button/Button";
 import "./Calculator.css";
 
 class Calculator extends Component {
@@ -36,8 +35,14 @@ class Calculator extends Component {
 
   handleClick = e => {
     const { calculation, lastClicked } = this.state;
+    const { operators, numbers, digitLimit } = this.props;
+    const { innerText } = e.target;
 
-    switch (e.target.innerText) {
+    // TODO - Fix issue if first button clicked is =
+    if (lastClicked === "=" && calculation === "0") {
+    }
+
+    switch (innerText) {
       case "AC": {
         this.setState({
           calculation: "0"
@@ -46,6 +51,7 @@ class Calculator extends Component {
       }
 
       case "=": {
+        const evaluated = eval(calculation);
         this.setState({
           calculation: evaluated
         });
@@ -53,7 +59,7 @@ class Calculator extends Component {
       }
 
       case ".": {
-        const splitCalc = calculation.split(/[\+\-\*\/]/);
+        const splitCalc = calculation.split(/[+\-*/]/);
         const last = splitCalc.slice(-1)[0];
 
         if (!last.includes(".")) {
@@ -67,30 +73,52 @@ class Calculator extends Component {
       default: {
         let e = undefined;
 
-        if (operators.includes(e.target.innerText)) {
+        if (operators.includes(innerText)) {
           if (operators.includes(lastClicked) && innerText !== "-") {
+            const lastNumberIndex = calculation
+              .split("")
+              .reverse()
+              .findIndex(
+                character => character !== " " && numbers.includes(+character)
+              );
+            e =
+              calculation.slice(0, calculation.length - lastNumberIndex) +
+              ` ${innerText} `;
+          } else {
+            e = `${calculation} ${innerText}`;
           }
+        } else {
+          e = calculation === "0" ? innerText : calculation + innerText;
         }
+
+        this.setState({
+          calculation: e
+        });
       }
+    }
+    this.setState({
+      lastClicked: innerText
+    });
+  };
+
+  checkDigitLimit = (calculation, digitLimit) => {
+    let previousVal = this.state.calculation;
+    if (calculation.length >= digitLimit) {
+      this.setState({
+        calculation: "Digit Limit Reached"
+      });
+      setTimeout(
+        () =>
+          this.setState({
+            calculation: previousVal
+          }),
+        1000
+      );
     }
   };
 
-  digitLimitAlert() {
-    let previousVal = this.state.calculation;
-    this.setState({
-      calculation: "Digit Limit Reached"
-    });
-    setTimeout(
-      () =>
-        this.setState({
-          calculation: previousVal
-        }),
-      1000
-    );
-  }
-
   render() {
-    const { calculation, lastClicked } = this.state;
+    const { calculation } = this.state;
     const { numbers, operators, ids } = this.props;
     return (
       <div className="Calculator-wrapper">
@@ -101,16 +129,26 @@ class Calculator extends Component {
           <hr></hr>
           <div className="buttons">
             <div className="controls">
-              <button className="button">AC</button>
-              <button className="button">CE</button>
+              <button className="button" onClick={this.handleClick} id="clear">
+                AC
+              </button>
             </div>
             <div className="numbers">
               {numbers.map(num => (
-                <button className="button" key={num} id={ids[num]}>
+                <button
+                  className="button"
+                  key={num}
+                  id={ids[num]}
+                  onClick={this.handleClick}
+                >
                   {num}
                 </button>
               ))}
-              <button className="button" id="decimal">
+              <button
+                className="button"
+                id="decimal"
+                onClick={this.handleClick}
+              >
                 .
               </button>
             </div>
@@ -120,11 +158,16 @@ class Calculator extends Component {
                   className="button operator"
                   key={operator}
                   id={ids[operator]}
+                  onClick={this.handleClick}
                 >
                   {operator}
                 </button>
               ))}
-              <button className="button equals" id="equals">
+              <button
+                className="button equals"
+                id="equals"
+                onClick={this.handleClick}
+              >
                 =
               </button>
             </div>
