@@ -39,8 +39,22 @@ class Calculator extends Component {
     const { innerText } = e.target;
 
     // TODO - Fix issue if first button clicked is =
-    if (lastClicked === "=" && calculation === "0") {
+    if (lastClicked === "=") {
+      this.setState({
+        lastClicked: undefined,
+        calculation: "0",
+        operation: undefined
+      });
+      this.calculate(e);
+    } else {
+      this.calculate(e);
     }
+  };
+
+  calculate = e => {
+    const { calculation, lastClicked } = this.state;
+    const { operators, numbers, digitLimit } = this.props;
+    const { innerText } = e.target;
 
     switch (innerText) {
       case "AC": {
@@ -85,7 +99,7 @@ class Calculator extends Component {
               calculation.slice(0, calculation.length - lastNumberIndex) +
               ` ${innerText} `;
           } else {
-            e = `${calculation} ${innerText}`;
+            e = `${calculation}${innerText}`;
           }
         } else {
           e = calculation === "0" ? innerText : calculation + innerText;
