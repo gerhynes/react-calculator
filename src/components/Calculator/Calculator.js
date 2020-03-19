@@ -5,9 +5,10 @@ class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lastClicked: undefined,
-      calculation: "0",
-      operation: undefined
+      currentVal: "0",
+      prevVal: "0",
+      formula: "0",
+      lastClicked: ""
     };
   }
 
@@ -34,7 +35,7 @@ class Calculator extends Component {
   };
 
   handleClick = e => {
-    const { calculation, lastClicked } = this.state;
+    const { formula, lastClicked } = this.state;
     const { operators, numbers, digitLimit } = this.props;
     const { innerText } = e.target;
 
@@ -42,7 +43,7 @@ class Calculator extends Component {
     if (lastClicked === "=") {
       this.setState({
         lastClicked: undefined,
-        calculation: "0",
+        formula: "0",
         operation: undefined
       });
       this.calculate(e);
@@ -51,34 +52,47 @@ class Calculator extends Component {
     }
   };
 
-  calculate = e => {
-    const { calculation, lastClicked } = this.state;
+  handleClear = () => {
+    this.setState({
+      currentVal: "0",
+      prevVal: "0",
+      formula: "0",
+      lastClicked: ""
+    });
+  };
+
+  handleNumber = e => {};
+  handleDecimal = () => {};
+  handleOperator = () => {};
+
+  handleCalculate = e => {
+    const { formula, lastClicked } = this.state;
     const { operators, numbers, digitLimit } = this.props;
     const { innerText } = e.target;
 
     switch (innerText) {
       case "AC": {
         this.setState({
-          calculation: "0"
+          formula: "0"
         });
         break;
       }
 
       case "=": {
-        const evaluated = eval(calculation);
+        const evaluated = eval(formula);
         this.setState({
-          calculation: evaluated
+          formula: evaluated
         });
         break;
       }
 
       case ".": {
-        const splitCalc = calculation.split(/[+\-*/]/);
+        const splitCalc = formula.split(/[+\-*/]/);
         const last = splitCalc.slice(-1)[0];
 
         if (!last.includes(".")) {
           this.setState({
-            calculation: calculation + "."
+            formula: formula + "."
           });
         }
         break;
@@ -89,24 +103,24 @@ class Calculator extends Component {
 
         if (operators.includes(innerText)) {
           if (operators.includes(lastClicked) && innerText !== "-") {
-            const lastNumberIndex = calculation
+            const lastNumberIndex = formula
               .split("")
               .reverse()
               .findIndex(
                 character => character !== " " && numbers.includes(+character)
               );
             e =
-              calculation.slice(0, calculation.length - lastNumberIndex) +
+              formula.slice(0, formula.length - lastNumberIndex) +
               ` ${innerText} `;
           } else {
-            e = `${calculation}${innerText}`;
+            e = `${formula}${innerText}`;
           }
         } else {
-          e = calculation === "0" ? innerText : calculation + innerText;
+          e = formula === "0" ? innerText : formula + innerText;
         }
 
         this.setState({
-          calculation: e
+          formula: e
         });
       }
     }
@@ -115,16 +129,16 @@ class Calculator extends Component {
     });
   };
 
-  checkDigitLimit = (calculation, digitLimit) => {
-    let previousVal = this.state.calculation;
-    if (calculation.length >= digitLimit) {
+  checkDigitLimit = (formula, digitLimit) => {
+    let previousVal = this.state.formula;
+    if (formula.length >= digitLimit) {
       this.setState({
-        calculation: "Digit Limit Reached"
+        formula: "Digit Limit Reached"
       });
       setTimeout(
         () =>
           this.setState({
-            calculation: previousVal
+            formula: previousVal
           }),
         1000
       );
@@ -132,18 +146,18 @@ class Calculator extends Component {
   };
 
   render() {
-    const { calculation } = this.state;
+    const { formula } = this.state;
     const { numbers, operators, ids } = this.props;
     return (
       <div className="Calculator-wrapper">
         <div className="Calculator">
           <div className="display" id="display">
-            {calculation}
+            {formula}
           </div>
           <hr></hr>
           <div className="buttons">
             <div className="controls">
-              <button className="button" onClick={this.handleClick} id="clear">
+              <button className="button" onClick={this.handleClear} id="clear">
                 AC
               </button>
             </div>
