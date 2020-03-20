@@ -13,9 +13,11 @@ class Calculator extends Component {
   }
 
   static defaultProps = {
+    isOperator: /[x/+‑]/,
+    endsWithOperator: /[x+‑/]$/,
     digitLimit: 10,
     numbers: [7, 8, 9, 4, 5, 6, 1, 2, 3, 0],
-    operators: ["/", "*", "-", "+"],
+    operators: ["/", "×", "-", "+"],
     ids: {
       7: "seven",
       8: "eight",
@@ -31,6 +33,35 @@ class Calculator extends Component {
       "*": "multiply",
       "-": "subtract",
       "+": "add"
+    }
+  };
+
+  handleClear = () => {
+    this.setState({
+      currentVal: "0",
+      prevVal: "0",
+      formula: "0",
+      lastClicked: ""
+    });
+  };
+
+  handleNumber = e => {};
+  handleDecimal = () => {};
+  handleOperator = () => {};
+
+  handleCalculate = () => {
+    if (!this.state.currentVal.includes("Limit")) {
+      let expression = this.state.formula;
+      while (this.props.endsWithOperator.test(expression)) {
+        expression = expression.slice(0, -1);
+      }
+      expression = expression.replace(/x/g, "*");
+      let result = Math.round(10000000 * eval(expression)) / 10000000;
+      this.setState({
+        currentVal: result.toString(),
+        formula: expression + "=" + result,
+        prevVal: result
+      });
     }
   };
 
@@ -52,20 +83,11 @@ class Calculator extends Component {
     }
   };
 
-  handleClear = () => {
-    this.setState({
-      currentVal: "0",
-      prevVal: "0",
-      formula: "0",
-      lastClicked: ""
-    });
-  };
-
   handleNumber = e => {};
   handleDecimal = () => {};
   handleOperator = () => {};
 
-  handleCalculate = e => {
+  calculate = e => {
     const { formula, lastClicked } = this.state;
     const { operators, numbers, digitLimit } = this.props;
     const { innerText } = e.target;
@@ -194,7 +216,7 @@ class Calculator extends Component {
               <button
                 className="button equals"
                 id="equals"
-                onClick={this.handleClick}
+                onClick={this.handleCalculate}
               >
                 =
               </button>
