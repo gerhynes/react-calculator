@@ -8,13 +8,15 @@ class Calculator extends Component {
       currentVal: "0",
       prevVal: "0",
       formula: "0",
-      lastClicked: ""
+      lastClicked: "",
+      evaluated: false
     };
   }
 
   static defaultProps = {
     isOperator: /[x/+‑]/,
     endsWithOperator: /[x+‑/]$/,
+    endsWithMinus: /[x/+]‑$/,
     digitLimit: 10,
     numbers: [7, 8, 9, 4, 5, 6, 1, 2, 3, 0],
     operators: ["/", "×", "-", "+"],
@@ -41,13 +43,45 @@ class Calculator extends Component {
       currentVal: "0",
       prevVal: "0",
       formula: "0",
-      lastClicked: ""
+      lastClicked: "",
+      evaluated: false
     });
   };
 
   handleNumber = e => {};
   handleDecimal = () => {};
-  handleOperator = () => {};
+
+  handleOperator = e => {
+    const { value } = e.target;
+    const { formula, prevVal, currentVal, evaluated } = this.state;
+    const { endsWithOperator, endsWithMinus } = this.props;
+    if (!currentVal.includes("Limit")) {
+      this.setState({
+        currentVal: value,
+        evaluated: false
+      });
+      if (evaluated) {
+        this.setState({
+          formula: prevVal + value
+        });
+      } else if (!endsWithOperator.test(formula)) {
+        this.setState({
+          prevVal: formula,
+          formula: formula + value
+        });
+      } else if (!endsWithMinus.test(formula)) {
+        this.setState({
+          formula:
+            (endsWithNegativeSign.test(formula + value) ? formula : prevVal) +
+            value
+        });
+      } else if (value !== "-") {
+        this.setState({
+          formula: prevVal + value
+        });
+      }
+    }
+  };
 
   handleCalculate = () => {
     if (!this.state.currentVal.includes("Limit")) {
@@ -60,111 +94,24 @@ class Calculator extends Component {
       this.setState({
         currentVal: result.toString(),
         formula: expression + "=" + result,
-        prevVal: result
+        prevVal: result,
+        evaluated: true
       });
     }
   };
 
-  handleClick = e => {
-    const { formula, lastClicked } = this.state;
-    const { operators, numbers, digitLimit } = this.props;
-    const { innerText } = e.target;
-
-    // TODO - Fix issue if first button clicked is =
-    if (lastClicked === "=") {
-      this.setState({
-        lastClicked: undefined,
-        formula: "0",
-        operation: undefined
-      });
-      this.calculate(e);
-    } else {
-      this.calculate(e);
-    }
-  };
-
-  handleNumber = e => {};
-  handleDecimal = () => {};
-  handleOperator = () => {};
-
-  calculate = e => {
-    const { formula, lastClicked } = this.state;
-    const { operators, numbers, digitLimit } = this.props;
-    const { innerText } = e.target;
-
-    switch (innerText) {
-      case "AC": {
-        this.setState({
-          formula: "0"
-        });
-        break;
-      }
-
-      case "=": {
-        const evaluated = eval(formula);
-        this.setState({
-          formula: evaluated
-        });
-        break;
-      }
-
-      case ".": {
-        const splitCalc = formula.split(/[+\-*/]/);
-        const last = splitCalc.slice(-1)[0];
-
-        if (!last.includes(".")) {
-          this.setState({
-            formula: formula + "."
-          });
-        }
-        break;
-      }
-
-      default: {
-        let e = undefined;
-
-        if (operators.includes(innerText)) {
-          if (operators.includes(lastClicked) && innerText !== "-") {
-            const lastNumberIndex = formula
-              .split("")
-              .reverse()
-              .findIndex(
-                character => character !== " " && numbers.includes(+character)
-              );
-            e =
-              formula.slice(0, formula.length - lastNumberIndex) +
-              ` ${innerText} `;
-          } else {
-            e = `${formula}${innerText}`;
-          }
-        } else {
-          e = formula === "0" ? innerText : formula + innerText;
-        }
-
-        this.setState({
-          formula: e
-        });
-      }
-    }
+  maxDigitAlert = () => {
     this.setState({
-      lastClicked: innerText
+      currentVal: "Digit Limit Met",
+      prevVal: this.state.currentVal
     });
-  };
-
-  checkDigitLimit = (formula, digitLimit) => {
-    let previousVal = this.state.formula;
-    if (formula.length >= digitLimit) {
-      this.setState({
-        formula: "Digit Limit Reached"
-      });
-      setTimeout(
-        () =>
-          this.setState({
-            formula: previousVal
-          }),
-        1000
-      );
-    }
+    setTimeout(
+      () =>
+        this.setState({
+          currentVal: this.state.prevVal
+        }),
+      1000
+    );
   };
 
   render() {
@@ -189,7 +136,7 @@ class Calculator extends Component {
                   className="button"
                   key={num}
                   id={ids[num]}
-                  onClick={this.handleClick}
+                  onClick={this.handleNumber}
                 >
                   {num}
                 </button>
@@ -197,7 +144,7 @@ class Calculator extends Component {
               <button
                 className="button"
                 id="decimal"
-                onClick={this.handleClick}
+                onClick={this.handleDecimal}
               >
                 .
               </button>
@@ -208,7 +155,7 @@ class Calculator extends Component {
                   className="button operator"
                   key={operator}
                   id={ids[operator]}
-                  onClick={this.handleClick}
+                  onClick={this.handleOperator}
                 >
                   {operator}
                 </button>
