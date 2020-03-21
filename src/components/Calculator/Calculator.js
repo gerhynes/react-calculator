@@ -48,8 +48,39 @@ class Calculator extends Component {
     });
   };
 
-  handleNumber = e => {};
   handleDecimal = () => {};
+
+  handleNumber = e => {
+    const { currentVal, formula, evaluated } = this.state;
+    const { digitLimit, isOperator } = this.props;
+    const { value } = e.target;
+    if (!currentVal.includes("Limit")) {
+      this.setState({ evaluated: false });
+      if (currentVal.length > digitLimit) {
+        this.maxDigitAlert();
+      } else if (evaluated) {
+        this.setState({
+          currentVal: value,
+          formula: value !== "0" ? value : ""
+        });
+      } else {
+        this.setState({
+          currentVal:
+            currentVal === "0" || isOperator.test(currentVal)
+              ? value
+              : currentVal + value,
+          formula:
+            currentVal === "0" && value === "0"
+              ? formula === ""
+                ? value
+                : formula
+              : /([^.0-9]0|^0)$/.test(formula)
+              ? formula.slice(0, -1) + value
+              : formula + value
+        });
+      }
+    }
+  };
 
   handleOperator = e => {
     const { value } = e.target;
