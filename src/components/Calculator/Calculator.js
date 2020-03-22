@@ -48,6 +48,8 @@ class Calculator extends Component {
     });
   };
 
+  handleCE = () => {};
+
   handleDecimal = () => {
     const { currentVal, evaluated, formula } = this.state;
     const { digitLimit, endsWithOperator } = this.props;
@@ -82,10 +84,11 @@ class Calculator extends Component {
 
   handleNumber = e => {
     console.log(e.target.value);
+    // Only run if digit limit not met
     if (!this.state.currentVal.includes("Limit")) {
       const { currentVal, formula, evaluated } = this.state;
       const { digitLimit, isOperator } = this.props;
-      const value = e.target.value;
+      const { value } = e.target;
       this.setState({ evaluated: false });
       if (currentVal.length > digitLimit) {
         this.maxDigitAlert();
@@ -188,8 +191,21 @@ class Calculator extends Component {
           <hr></hr>
           <div className="buttons">
             <div className="controls">
-              <button className="button" onClick={this.handleClear} id="clear">
+              <button
+                className="button"
+                onClick={this.handleClear}
+                id="clear"
+                value="AC"
+              >
                 AC
+              </button>
+              <button
+                className="button"
+                onClick={this.handleCE}
+                id="back"
+                value="CE"
+              >
+                CE
               </button>
             </div>
             <div className="numbers">
@@ -208,6 +224,7 @@ class Calculator extends Component {
                 className="button"
                 id="decimal"
                 onClick={this.handleDecimal}
+                value="."
               >
                 .
               </button>
@@ -219,6 +236,7 @@ class Calculator extends Component {
                   key={operator}
                   id={ids[operator]}
                   onClick={this.handleOperator}
+                  value={operator}
                 >
                   {operator}
                 </button>
@@ -227,6 +245,7 @@ class Calculator extends Component {
                 className="button equals"
                 id="equals"
                 onClick={this.handleCalculate}
+                value="="
               >
                 =
               </button>
