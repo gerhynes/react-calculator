@@ -7,7 +7,7 @@ class Calculator extends Component {
     this.state = {
       currentVal: "0",
       prevVal: "0",
-      formula: "0",
+      formula: "",
       lastClicked: "",
       evaluated: false
     };
@@ -48,13 +48,44 @@ class Calculator extends Component {
     });
   };
 
-  handleDecimal = () => {};
+  handleDecimal = () => {
+    const { currentVal, evaluated, formula } = this.state;
+    const { digitLimit, endsWithOperator } = this.props;
+    if (evaluated === true) {
+      this.setState({
+        currentVal: "0.",
+        formula: "0.",
+        evaluated: false
+      });
+    } else if (!currentVal.includes(".") && !currentVal.includes("Limit")) {
+      this.setState({
+        evaluated: false
+      });
+      if (currentVal.length > digitLimit) {
+        this.maxDigitAlert();
+      } else if (
+        endsWithOperator.test(formula) ||
+        (currentVal === "0" && formula === "")
+      ) {
+        this.setState({
+          currentVal: "0.",
+          formula: formula + "0."
+        });
+      } else {
+        this.setState({
+          currentVal: formula.match(/(-?\d+\.?\d*)$/)[0] + ".",
+          formula: formula + "."
+        });
+      }
+    }
+  };
 
   handleNumber = e => {
-    const { currentVal, formula, evaluated } = this.state;
-    const { digitLimit, isOperator } = this.props;
-    const { value } = e.target;
-    if (!currentVal.includes("Limit")) {
+    console.log(e.target.value);
+    if (!this.state.currentVal.includes("Limit")) {
+      const { currentVal, formula, evaluated } = this.state;
+      const { digitLimit, isOperator } = this.props;
+      const value = e.target.value;
       this.setState({ evaluated: false });
       if (currentVal.length > digitLimit) {
         this.maxDigitAlert();
@@ -83,10 +114,10 @@ class Calculator extends Component {
   };
 
   handleOperator = e => {
-    const { value } = e.target;
-    const { formula, prevVal, currentVal, evaluated } = this.state;
-    const { endsWithOperator, endsWithMinus } = this.props;
-    if (!currentVal.includes("Limit")) {
+    if (!this.state.currentVal.includes("Limit")) {
+      const value = e.targetvalue;
+      const { formula, prevVal, evaluated } = this.state;
+      const { endsWithOperator, endsWithMinus } = this.props;
       this.setState({
         currentVal: value,
         evaluated: false
@@ -103,8 +134,7 @@ class Calculator extends Component {
       } else if (!endsWithMinus.test(formula)) {
         this.setState({
           formula:
-            (endsWithNegativeSign.test(formula + value) ? formula : prevVal) +
-            value
+            (endsWithMinus.test(formula + value) ? formula : prevVal) + value
         });
       } else if (value !== "-") {
         this.setState({
@@ -146,13 +176,14 @@ class Calculator extends Component {
   };
 
   render() {
-    const { formula } = this.state;
+    const { formula, currentVal } = this.state;
     const { numbers, operators, ids } = this.props;
     return (
       <div className="Calculator-wrapper">
         <div className="Calculator">
           <div className="display" id="display">
-            {formula}
+            <div className="formula">{formula}</div>
+            <div className="currentVal">{currentVal}</div>
           </div>
           <hr></hr>
           <div className="buttons">
@@ -168,6 +199,7 @@ class Calculator extends Component {
                   key={num}
                   id={ids[num]}
                   onClick={this.handleNumber}
+                  value={num}
                 >
                   {num}
                 </button>
