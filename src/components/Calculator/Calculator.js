@@ -121,34 +121,37 @@ class Calculator extends Component {
   };
 
   handleOperator = e => {
-    if (!this.state.currentVal.includes("Limit")) {
-      const value = e.targetvalue;
-      const { formula, prevVal, evaluated } = this.state;
-      const { endsWithOperator, endsWithMinus } = this.props;
-      this.setState({
-        currentVal: value,
-        evaluated: false
-      });
-      if (evaluated) {
+    const value = e.targetvalue;
+    const { formula, currentVal, prevVal } = this.state;
+    const { isOperator } = this.props;
+    if (!this.lockOperators(formula, currentVal)) {
+      if (formula.indexOf("=") !== -1) {
         this.setState({
           formula: prevVal + value
         });
-      } else if (!endsWithOperator.test(formula)) {
+      } else {
         this.setState({
-          prevVal: formula,
-          formula: formula + value
-        });
-      } else if (!endsWithMinus.test(formula)) {
-        this.setState({
-          formula:
-            (endsWithMinus.test(formula + value) ? formula : prevVal) + value
-        });
-      } else if (value !== "-") {
-        this.setState({
-          formula: prevVal + value
+          prevVal: !isOperator.test(this.state.currentVal)
+            ? this.state.formula
+            : this.state.prevVal,
+          formula: !isOperator.test(this.state.currentVal)
+            ? (this.state.formula += e.target.value)
+            : (this.state.prevVal += e.target.value)
         });
       }
+      this.setState({
+        currentVal: value,
+        lastClicked: "operator"
+      });
     }
+  };
+
+  lockOperators = (formula, currentVal) => {
+    return (
+      formula.lastIndexOf(".") === formula.length - 1 ||
+      formula.lastIndexOf("-") === formula.length - 1 ||
+      currentVal.indexOf("Met") !== -1
+    );
   };
 
   handleCalculate = () => {
