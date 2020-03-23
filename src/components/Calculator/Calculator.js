@@ -83,16 +83,22 @@ class Calculator extends Component {
   };
 
   handleNumber = e => {
-    console.log(e.target.value);
     // Only run if digit limit not met
-    if (!this.state.currentVal.includes("Limit")) {
-      const { currentVal, formula, evaluated } = this.state;
-      const { digitLimit, isOperator } = this.props;
+    if (this.state.currentVal.indexOf("Limit") === -1) {
+      const { currentVal, formula, lastClicked } = this.state;
+      const { digitLimit, isOperator, endsWithOperator } = this.props;
       const { value } = e.target;
-      this.setState({ evaluated: false });
+      this.setState({ lastClicked: "num" });
       if (currentVal.length > digitLimit) {
         this.maxDigitAlert();
-      } else if (evaluated) {
+      } else if (lastClicked === "CE" && this.state.formula !== "") {
+        this.setState({
+          currentVal: !endsWithOperator.test(formula)
+            ? formula.match(/(-?\d+\.?\d*)$/)[0] + value
+            : value,
+          formula: (formula += value)
+        });
+      } else if (formula.indexOf("=") !== -1) {
         this.setState({
           currentVal: value,
           formula: value !== "0" ? value : ""
@@ -105,10 +111,8 @@ class Calculator extends Component {
               : currentVal + value,
           formula:
             currentVal === "0" && value === "0"
-              ? formula === ""
-                ? value
-                : formula
-              : /([^.0-9]0|^0)$/.test(formula)
+              ? formula
+              : /([^.0-9]0)$/.test(this.state.formula)
               ? formula.slice(0, -1) + value
               : formula + value
         });
