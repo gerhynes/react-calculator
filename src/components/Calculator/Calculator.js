@@ -121,7 +121,7 @@ class Calculator extends Component {
   };
 
   handleOperator = e => {
-    const value = e.targetvalue;
+    const value = e.target.value;
     const { formula, currentVal, prevVal } = this.state;
     const { isOperator } = this.props;
     if (!this.lockOperators(formula, currentVal)) {
@@ -129,14 +129,15 @@ class Calculator extends Component {
         this.setState({
           formula: prevVal + value
         });
+      } else if (!isOperator.test(this.state.currentVal)) {
+        this.setState({
+          prevVal: this.state.formula,
+          formula: this.state.formula + e.target.value
+        });
       } else {
         this.setState({
-          prevVal: !isOperator.test(this.state.currentVal)
-            ? this.state.formula
-            : this.state.prevVal,
-          formula: !isOperator.test(this.state.currentVal)
-            ? (this.state.formula += e.target.value)
-            : (this.state.prevVal += e.target.value)
+          prevVal: this.state.prevVal,
+          formula: this.state.prevVal + e.target.value
         });
       }
       this.setState({
