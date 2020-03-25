@@ -155,9 +155,9 @@ class Calculator extends Component {
   };
 
   handleCalculate = () => {
-    if (!this.state.currentVal.includes("Limit")) {
+    if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
       let expression = this.state.formula;
-      while (this.props.endsWithOperator.test(expression)) {
+      if (this.props.endsWithOperator.test(expression)) {
         expression = expression.slice(0, -1);
       }
       expression = expression.replace(/x/g, "*");
@@ -166,7 +166,8 @@ class Calculator extends Component {
         currentVal: result.toString(),
         formula: expression + "=" + result,
         prevVal: result,
-        evaluated: true
+        evaluated: true,
+        lastClicked: "evaluated"
       });
     }
   };
