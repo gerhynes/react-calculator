@@ -14,12 +14,12 @@ class Calculator extends Component {
   }
 
   static defaultProps = {
-    isOperator: /[x/+‑]/,
+    isOperator: /[×/+‑]/,
     endsWithOperator: /[x+‑/]$/,
     endsWithMinus: /[x/+]‑$/,
     digitLimit: 10,
     numbers: [7, 8, 9, 4, 5, 6, 1, 2, 3, 0],
-    operators: ["/", "×", "-", "+"],
+    operators: ["/", "x", "-", "+"],
     ids: {
       7: "seven",
       8: "eight",
@@ -83,19 +83,20 @@ class Calculator extends Component {
   };
 
   handleNumber = e => {
-    // Only run if digit limit not met
-    if (this.state.currentVal.indexOf("Limit") === -1) {
-      const { currentVal, formula, lastClicked } = this.state;
-      const { digitLimit, isOperator, endsWithOperator } = this.props;
-      const { value } = e.target;
-      this.setState({ lastClicked: "num" });
+    const { currentVal, formula, lastClicked } = this.state;
+    const { digitLimit, isOperator, endsWithOperator } = this.props;
+    const { value } = e.target;
+    if (currentVal.indexOf("Limit") === -1) {
+      this.setState({
+        lastClicked: "num"
+      });
       if (currentVal.length > digitLimit) {
-        this.maxDigitAlert();
-      } else if (lastClicked === "CE" && this.state.formula !== "") {
+        this.maxDigitWarning();
+      } else if (lastClicked === "CE" && formula !== "") {
         this.setState({
           currentVal: !endsWithOperator.test(formula)
             ? formula.match(/(-?\d+\.?\d*)$/)[0] + value
-            : value,
+            : e.target.value,
           formula: (formula += value)
         });
       } else if (formula.indexOf("=") !== -1) {
@@ -112,7 +113,7 @@ class Calculator extends Component {
           formula:
             currentVal === "0" && value === "0"
               ? formula
-              : /([^.0-9]0)$/.test(this.state.formula)
+              : /([^.0-9]0)$/.test(formula)
               ? formula.slice(0, -1) + value
               : formula + value
         });
@@ -132,12 +133,12 @@ class Calculator extends Component {
       } else if (!isOperator.test(this.state.currentVal)) {
         this.setState({
           prevVal: this.state.formula,
-          formula: this.state.formula + e.target.value
+          formula: (this.state.formula += e.target.value)
         });
       } else {
         this.setState({
           prevVal: this.state.prevVal,
-          formula: this.state.prevVal + e.target.value
+          formula: (this.state.prevVal += e.target.value)
         });
       }
       this.setState({
