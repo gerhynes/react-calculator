@@ -48,7 +48,19 @@ class Calculator extends Component {
     });
   };
 
-  handleCE = () => {};
+  handleCE = () => {
+    // Check if formula ends with x+-/ or digit(s).digit(s)
+    let endsWith = /[x+‑\/]$|\d+\.?\d*$/;
+    if (this.state.formula.indexOf("=") !== -1) {
+      this.handleClear();
+    } else {
+      this.setState({
+        formula: this.state.formula.replace(endsWith, ""),
+        currentVal: "0",
+        lastClicked: "CE"
+      });
+    }
+  };
 
   handleDecimal = () => {
     const { currentVal, evaluated, formula } = this.state;
