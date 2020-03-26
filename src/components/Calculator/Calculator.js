@@ -32,7 +32,7 @@ class Calculator extends Component {
       3: "three",
       0: "zero",
       "/": "divide",
-      "*": "multiply",
+      x: "multiply",
       "-": "subtract",
       "+": "add"
     }
@@ -42,7 +42,7 @@ class Calculator extends Component {
     this.setState({
       currentVal: "0",
       prevVal: "0",
-      formula: "0",
+      formula: "",
       lastClicked: "",
       evaluated: false
     });
@@ -194,9 +194,11 @@ class Calculator extends Component {
     return (
       <div className="Calculator-wrapper">
         <div className="Calculator">
-          <div className="display" id="display">
+          <div className="display-container">
             <div className="formula">{formula}</div>
-            <div className="currentVal">{currentVal}</div>
+            <div className="display" id="display">
+              {currentVal}
+            </div>
           </div>
           <hr></hr>
           <div className="buttons">
