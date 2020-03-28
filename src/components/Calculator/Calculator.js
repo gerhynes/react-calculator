@@ -14,9 +14,9 @@ class Calculator extends Component {
   }
 
   static defaultProps = {
-    isOperator: /[×/+‑]/,
-    endsWithOperator: /[x+‑/]$/,
-    endsWithMinus: /[x/+]‑$/,
+    isOperator: /[x/+-]/,
+    endsWithOperator: /[x+-/]$/,
+    endsWithMinus: /[x/+]-$/,
     digitLimit: 10,
     numbers: [7, 8, 9, 4, 5, 6, 1, 2, 3, 0],
     operators: ["/", "x", "-", "+"],
@@ -103,7 +103,7 @@ class Calculator extends Component {
         lastClicked: "num"
       });
       if (currentVal.length > digitLimit) {
-        this.maxDigitWarning();
+        this.maxDigitAlert();
       } else if (lastClicked === "CE" && formula !== "") {
         this.setState({
           currentVal: !endsWithOperator.test(formula)
@@ -134,29 +134,28 @@ class Calculator extends Component {
   };
 
   handleOperator = e => {
-    const value = e.target.value;
-    const { formula, currentVal, prevVal } = this.state;
-    const { isOperator } = this.props;
-    if (!this.lockOperators(formula, currentVal)) {
-      if (formula.indexOf("=") !== -1) {
+    if (!this.state.currentVal.includes("Limit")) {
+      const value = e.target.value;
+      const { formula, prevVal, evaluated } = this.state;
+      const { endsWithOperator, endsWithMinus } = this.props;
+      this.setState({ currentVal: value, evaluated: false });
+      if (evaluated) {
+        this.setState({ formula: prevVal + value });
+      } else if (!endsWithOperator.test(formula)) {
+        this.setState({
+          prevVal: formula,
+          formula: formula + value
+        });
+      } else if (!endsWithMinus.test(formula)) {
+        this.setState({
+          formula:
+            (endsWithMinus.test(formula + value) ? formula : prevVal) + value
+        });
+      } else if (value !== "-") {
         this.setState({
           formula: prevVal + value
         });
-      } else if (!isOperator.test(this.state.currentVal)) {
-        this.setState({
-          prevVal: this.state.formula,
-          formula: (this.state.formula += e.target.value)
-        });
-      } else {
-        this.setState({
-          prevVal: this.state.prevVal,
-          formula: (this.state.prevVal += e.target.value)
-        });
       }
-      this.setState({
-        currentVal: value,
-        lastClicked: "operator"
-      });
     }
   };
 
