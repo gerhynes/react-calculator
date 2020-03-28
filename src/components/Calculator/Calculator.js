@@ -159,18 +159,10 @@ class Calculator extends Component {
     }
   };
 
-  lockOperators = (formula, currentVal) => {
-    return (
-      formula.lastIndexOf(".") === formula.length - 1 ||
-      formula.lastIndexOf("-") === formula.length - 1 ||
-      currentVal.indexOf("Met") !== -1
-    );
-  };
-
   handleCalculate = () => {
-    if (!this.lockOperators(this.state.formula, this.state.currentVal)) {
+    if (!this.state.currentVal.includes("Limit")) {
       let expression = this.state.formula;
-      if (this.props.endsWithOperator.test(expression)) {
+      while (this.props.endsWithOperator.test(expression)) {
         expression = expression.slice(0, -1);
       }
       expression = expression.replace(/x/g, "*");
@@ -179,8 +171,7 @@ class Calculator extends Component {
         currentVal: result.toString(),
         formula: expression + "=" + result,
         prevVal: result,
-        evaluated: true,
-        lastClicked: "evaluated"
+        evaluated: true
       });
     }
   };
