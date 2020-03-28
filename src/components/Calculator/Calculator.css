@@ -100,9 +100,7 @@ hr {
   width: 74.5px;
   border-radius: 50%;
 }
-/* 
-@media (max-width: 400px) {
-  .Calculator {
-    width: 90%;
-  }
-} */
+
+button#zero {
+  grid-column-start: 2;
+}
