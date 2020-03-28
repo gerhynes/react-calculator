@@ -63,38 +63,6 @@ class Calculator extends Component {
     }
   };
 
-  handleDecimal = () => {
-    const { currentVal, evaluated, formula } = this.state;
-    const { digitLimit, endsWithOperator } = this.props;
-    if (evaluated === true) {
-      this.setState({
-        currentVal: "0.",
-        formula: "0.",
-        evaluated: false
-      });
-    } else if (!currentVal.includes(".") && !currentVal.includes("Limit")) {
-      this.setState({
-        evaluated: false
-      });
-      if (currentVal.length > digitLimit) {
-        this.maxDigitAlert();
-      } else if (
-        endsWithOperator.test(formula) ||
-        (currentVal === "0" && formula === "")
-      ) {
-        this.setState({
-          currentVal: "0.",
-          formula: formula + "0."
-        });
-      } else {
-        this.setState({
-          currentVal: formula.match(/(-?\d+\.?\d*)$/)[0] + ".",
-          formula: formula + "."
-        });
-      }
-    }
-  };
-
   handleNumber = e => {
     const { currentVal, formula, lastClicked } = this.state;
     const { digitLimit, isOperator, endsWithOperator } = this.props;
@@ -129,6 +97,52 @@ class Calculator extends Component {
               : /([^.0-9]0)$/.test(formula)
               ? formula.slice(0, -1) + value
               : formula + value
+        });
+      }
+    }
+  };
+
+  maxDigitAlert = () => {
+    this.setState({
+      currentVal: "Digit Limit Met",
+      prevVal: this.state.currentVal
+    });
+    setTimeout(
+      () =>
+        this.setState({
+          currentVal: this.state.prevVal
+        }),
+      1000
+    );
+  };
+
+  handleDecimal = () => {
+    const { currentVal, evaluated, formula } = this.state;
+    const { digitLimit, endsWithOperator } = this.props;
+    if (evaluated === true) {
+      this.setState({
+        currentVal: "0.",
+        formula: "0.",
+        evaluated: false
+      });
+    } else if (!currentVal.includes(".") && !currentVal.includes("Limit")) {
+      this.setState({
+        evaluated: false
+      });
+      if (currentVal.length > digitLimit) {
+        this.maxDigitAlert();
+      } else if (
+        endsWithOperator.test(formula) ||
+        (currentVal === "0" && formula === "")
+      ) {
+        this.setState({
+          currentVal: "0.",
+          formula: formula + "0."
+        });
+      } else {
+        this.setState({
+          currentVal: formula.match(/(-?\d+\.?\d*)$/)[0] + ".",
+          formula: formula + "."
         });
       }
     }
@@ -175,20 +189,6 @@ class Calculator extends Component {
         evaluated: true
       });
     }
-  };
-
-  maxDigitAlert = () => {
-    this.setState({
-      currentVal: "Digit Limit Met",
-      prevVal: this.state.currentVal
-    });
-    setTimeout(
-      () =>
-        this.setState({
-          currentVal: this.state.prevVal
-        }),
-      1000
-    );
   };
 
   render() {
