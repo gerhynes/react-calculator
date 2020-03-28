@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Display from "../Display/Display";
 import "./Calculator.css";
 
 class Calculator extends Component {
@@ -196,12 +197,7 @@ class Calculator extends Component {
     return (
       <div className="Calculator-wrapper">
         <div className="Calculator">
-          <div className="display-container">
-            <div className="formula">{formula}</div>
-            <div className="display" id="display">
-              {currentVal}
-            </div>
-          </div>
+          <Display formula={formula} currentVal={currentVal} />
           <hr></hr>
           <div className="buttons">
             <div className="controls">
